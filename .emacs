@@ -15,7 +15,8 @@
  '(custom-safe-themes (quote ("fdbe1d8c4ab681385cf679fb2c9d7643a606e6bb048d60320d728f70fcb53727" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" default)))
  '(doc-view-continuous t)
  '(inhibit-startup-screen t)
- '(org-agenda-files (quote ("~/Storage/Writing/novelplan.org")))
+ '(org-capture-templates (quote (("p" "Plain" entry (file "~/org~/notes.org") "* %?") ("n" "Notes" entry (file "~/org~/notes.org") "* %? :Note:
+	    %U"))))
  '(preview-auto-cache-preamble t)
  '(safe-local-variable-values (quote ((column-number-mode . true)))))
 
