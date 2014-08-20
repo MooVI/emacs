@@ -122,6 +122,8 @@
   (make-temp-file (or prefix "flymake")))
 
 (setq pycodechecker "pylint_etc_wrapper.py")
+
+
 (when (load "flymake" t)
   (load-library "flymake-cursor")
   (defun dss/flymake-pycodecheck-init ()
@@ -268,8 +270,22 @@ python-shell-completion-string-code
 ;Flymake
 (add-hook 'c-mode-hook 'flymake-mode)
 (add-hook 'c++-mode-hook 'flymake-mode)
-(add-hook 'python-mode-hook 'flymake-mode)
+;(add-hook 'python-mode-hook 'flymake-mode)
 
+(require 'tramp-cmds)
+
+(add-hook 'python-mode-hook
+	  (lambda ()
+	    (when (and buffer-file-name
+		       (file-writable-p
+			(file-name-directory buffer-file-name))
+		       (file-writable-p buffer-file-name)
+		       (not (subsetp
+			     (list (current-buffer))
+			     (tramp-list-remote-buffers))))
+	      (local-set-key (kbd "C-c d")
+			     'flymake-display-err-menu-for-current-line)
+	      (flymake-mode t))))
 
 
 ;Org Mode
