@@ -294,6 +294,40 @@ python-shell-completion-string-code
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
+(add-hook 'org-mode-hook 'flyspell-mode)
+(add-hook 'org-mode-hook 'visual-line-mode)
+
+
+
+;Org Ediff
+;; ediff for org-mode files
+(add-hook 'ediff-prepare-buffer-hook 
+          (lambda () 
+            (cond ((eq major-mode 'org-mode)
+                   (visible-mode 1)))))
+
+;Org Word Count
+(require 'org-wc)
+
+(defun tidy ()
+  "Tidy up a buffer by replacing all special Unicode characters
+   (smart quotes, etc.) with their more sane cousins"
+  (interactive)
+  (let ((unicode-map '(("[\u2018\|\u2019\|\u201A\|\uFFFD]" . "'")
+                       ("[\u201c\|\u201d\|\u201e]" . "\"")
+                       ("[\u2013\]" . "--")
+		       ("[\u2014\]" . "---")
+                       ("\u2026" . "...")
+                       ("\u00A9" . "(c)")
+                       ("\u00AE" . "(r)")
+                       ("\u2122" . "TM")
+                       ("[\u02DC\|\u00A0]" . " "))))
+    (save-excursion
+      (loop for (key . value) in unicode-map
+            do
+            (goto-char (point-min))
+            (replace-regexp key value)))))
+
 ;(setq org-default-notes-file (concat org-directory "~/notes.org"))
 
 ; Targets include this file and any file contributing to the agenda - up to 9 levels deep
@@ -319,7 +353,7 @@ python-shell-completion-string-code
 
 (setq org-refile-target-verify-function 'bh/verify-refile-target)
 
-(setq org-agenda-files (quote ("~/Storage/Writing")))
+(setq org-agenda-files "~/org~/agenda_files")
 
 ;Winner Mode and Moving
 (when (fboundp 'winner-mode)
