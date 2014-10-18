@@ -5,7 +5,7 @@
  * Created on 13 October 2014, 11:54
  */
 
-#if 1
+#if 0
 
 #include<Eigen/Dense>
 #include<Eigen/unsupported/Eigen/MPRealSupport>
@@ -27,9 +27,9 @@ typedef double mpreal;
 int main() {
     //    mpreal::set_default_prec(128);
     ScatterPlotter plotter;
-    const int L = 10000000;
+    const int L = 1000000;
     const int sample = 10;
-    const int numPoints = 25;
+    const int numPoints = 100;
 
     typedef Eigen::Matrix<mpreal, Eigen::Dynamic, Eigen::Dynamic> Matrix2w2w;
     typedef Eigen::Matrix<mpreal, Eigen::Dynamic, Eigen::Dynamic> Matrixww;
@@ -37,10 +37,10 @@ int main() {
     typedef Eigen::Matrix<mpreal, Eigen::Dynamic, 1> Vectorw;
 
 
-    const double W = 1.0;
+    const double W = 5.0;
     const double halfW = W/2;
     const double E = 0.0;
-    mpreal rel_err = 0.001;
+    mpreal rel_err = 0.01;
     
     Eigen::Matrix<mpreal, numPoints, 1> mfp;
     
@@ -52,7 +52,7 @@ int main() {
     forparams.end = 50.0;
     NumMethod::RandomClosed random;
     std::ofstream outfile;
-    outfile.open("mfp_1dl", std::ios::trunc);
+    outfile.open("mfp_5d", std::ios::trunc);
     int oldwidth = 0;
     auto t1 = std::chrono::high_resolution_clock::now();
     

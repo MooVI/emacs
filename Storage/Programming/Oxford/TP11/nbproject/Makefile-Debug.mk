@@ -36,15 +36,17 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/main_1.o
+	${OBJECTDIR}/main_1.o \
+	${OBJECTDIR}/twod.o \
+	${OBJECTDIR}/twod_1.o
 
 
 # C Compiler Flags
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-O3 -lgmp -lmpfr
-CXXFLAGS=-O3 -lgmp -lmpfr
+CCFLAGS=-Ofast -lgmp -lmpfr
+CXXFLAGS=-Ofast -lgmp -lmpfr
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -70,12 +72,22 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/tp11: ${OBJECTFILES}
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../.. -std=c++11 -O3 -lgmp -lmpfr -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -I../.. -std=c++11 -Ofast -lgmp -lmpfr -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/main_1.o: main_1.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../.. -std=c++11 -O3 -lgmp -lmpfr -MMD -MP -MF $@.d -o ${OBJECTDIR}/main_1.o main_1.cpp
+	$(COMPILE.cc) -g -I../.. -std=c++11 -Ofast -lgmp -lmpfr -MMD -MP -MF $@.d -o ${OBJECTDIR}/main_1.o main_1.cpp
+
+${OBJECTDIR}/twod.o: twod.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../.. -std=c++11 -Ofast -lgmp -lmpfr -MMD -MP -MF $@.d -o ${OBJECTDIR}/twod.o twod.cpp
+
+${OBJECTDIR}/twod_1.o: twod_1.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../.. -std=c++11 -Ofast -lgmp -lmpfr -MMD -MP -MF $@.d -o ${OBJECTDIR}/twod_1.o twod_1.cpp
 
 # Subprojects
 .build-subprojects:
