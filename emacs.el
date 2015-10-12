@@ -1,3 +1,6 @@
+;Current Packages: (deferred deferred ido-completing-read+ ido-completing-read+ ido-ubiquitous ido-completing-read+ ido-ubiquitous magit magit-popup dash async git-commit with-editor dash async dash with-editor dash async dash async git-commit with-editor dash async dash git-commit with-editor dash async with-editor magit-popup dash async magit-popup async async dash dash mmm-mode mmm-mode yaml-mode yaml-mode auto-complete-rst auto-complete popup color-theme-solarized color-theme flymake ido-ubiquitous ido-completing-read+ jedi auto-complete popup jedi-core python-environment deferred epc ctable concurrent deferred jedi-core python-environment deferred epc ctable concurrent deferred magit git-rebase-mode git-commit-mode mmm-mode popup python-environment deferred yaml-mode)
+
+
 ;Load Path
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 (add-to-list 'load-path "~/Storage/Programming/Emacs")
