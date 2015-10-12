@@ -16,12 +16,22 @@
 (add-to-list 'load-path "~/Storage/Programming/Emacs/plugins/yasnippet")
 
 ;Theme
-(load-theme 'solarized-dark t)
+(load-theme 'solarized t)
 
 
 ;R (ESS)
 
 (load "~/Storage/Programming/Emacs/ess/lisp/ess-site")
+
+
+;For comint modes, make arrow keys history
+(eval-after-load "comint"
+'(progn
+(define-key comint-mode-map [up]
+'comint-previous-matching-input-from-input)
+(define-key comint-mode-map [down]
+'comint-next-matching-input-from-input)
+))
 
 
 ;IDO
@@ -220,6 +230,7 @@ python-shell-completion-string-code
 
 ;Git
 (global-set-key (kbd "C-c C-g") 'magit-status)
+(setq magit-last-seen-setup-instructions "1.4.0")
 
 ;GLSL editing
 (autoload 'glsl-mode "glsl-mode" nil t)
@@ -289,6 +300,7 @@ python-shell-completion-string-code
 
 
 ;Org Mode
+(require 'org)
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-ca" 'org-agenda)
@@ -296,6 +308,10 @@ python-shell-completion-string-code
 
 (add-hook 'org-mode-hook 'flyspell-mode)
 (add-hook 'org-mode-hook 'visual-line-mode)
+
+
+
+(run-at-time "00:59" 3600 'org-save-all-org-buffers)
 
 
 
@@ -394,6 +410,22 @@ python-shell-completion-string-code
    )
 )
 
+;;Ignore Text when exporting
+;; backend aware export preprocess hook
+;(defun sa-org-export-preprocess-hook ()
+;  "My backend aware export preprocess hook."
+;  (interactive)
+;  (save-excursion
+;    (when (eq org-export-current-backend 'latex)
+;      ;; ignoreheading tag for bibliographies and appendices
+;      (let* ((tag "text"))
+;        (org-map-entries (org-cut-subtree)
+;                         (concat ":" tag ":"))))))
+
+;(add-hook 'org-export-preprocess-hook 'sa-org-export-preprocess-hook)
+
+
+
 (defun change-split-type (split-fn &optional arg)
   "Change 3 window style from horizontal to vertical and vice-versa"
   (let ((bufList (mapcar 'window-buffer (window-list))))
@@ -475,3 +507,94 @@ python-shell-completion-string-code
          (t
           (rename-file filename new-name t)
           (set-visited-file-name new-name t t)))))))
+
+
+(require 'ox-odt)
+
+
+;Org Export
+(defun symmetry ()
+  "Export symmetry."
+  (interactive)
+  (shell-command "python3 parse.py")
+  (set-buffer (find-file-noselect "~/Storage/Writing/Symmetry/text.org" t))
+  (org-latex-export-to-pdf)
+  (org-word-count (point-min) (point-max))
+  (call-process-shell-command "evince text.pdf&" nil 0)
+  (kill-buffer "text.org")
+  (shell-command "rm text.org text.tex")
+  )
+
+;Export to odt
+(defun exp_odt ()
+  "Export symmetry."
+  (interactive)
+  (shell-command "python3 parse.py")
+  (set-buffer (find-file-noselect "~/Storage/Writing/Symmetry/text.org" t))
+  (org-odt-export-to-odt)
+  (org-word-count (point-min) (point-max))
+  (call-process-shell-command "gnome-open text.odt&" nil 0)
+  (kill-buffer "text.org")
+  (shell-command "rm text.org text.tex")
+  )
+
+;Org Export
+(defun swc ()
+  "Export symmetry."
+  (interactive)
+  (shell-command "python3 parse.py")
+  (set-buffer (find-file-noselect "~/Storage/Writing/Symmetry/text.org" t))
+  (org-word-count (point-min) (point-max))
+  (kill-buffer "text.org")
+  (with-temp-buffer (shell-command "rm text.org" t))
+  )
+
+;Copy paste
+(setq x-select-enable-clipboard t)
+(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+
+
+
+					;Word Frequency
+(defvar punctuation-marks '(","
+                            "."
+                            "'"
+                            "&"
+                            "\"")
+  "List of Punctuation Marks that you want to count.")
+
+(defun count-raw-word-list (raw-word-list)
+  (cl-loop with result = nil
+           for elt in raw-word-list
+           do (incf (cdr (or (assoc elt result)
+                             (first (push (cons elt 0) result)))))
+           finally return (sort result
+                                (lambda (a b) (string< (car a) (car b))))))
+
+(defun word-stats ()
+  (interactive)
+  (let* ((words (split-string
+                 (downcase (buffer-string))
+                 (format "[ %s\f\t\n\r\v]+"
+                         (mapconcat #'identity punctuation-marks ""))
+                 t))
+         (punctuation-marks (cl-remove-if-not
+                             (lambda (elt) (member elt punctuation-marks))
+                             (split-string (buffer-string) "" t )))
+         (raw-word-list (append punctuation-marks words))
+         (word-list (count-raw-word-list raw-word-list)))
+    (with-current-buffer (get-buffer-create "*word-statistics*")
+      (erase-buffer)
+      (insert "| word | occurences |
+               |-----------+------------|\n")
+
+      (dolist (elt word-list)
+        (insert (format "| '%s' | %d |\n" (car elt) (cdr elt))))
+
+      (org-mode)
+      (indent-region (point-min) (point-max))
+      (goto-char 100)
+      (org-cycle)
+      (goto-char 79)
+      (org-table-sort-lines nil ?N)))
+  (pop-to-buffer "*word-statistics*"))
