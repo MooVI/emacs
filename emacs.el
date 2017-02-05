@@ -27,6 +27,9 @@
 (load "~/Storage/Programming/Emacs/ess/lisp/ess-site")
 
 
+;Magit
+(setq magit-completing-read-function 'magit-ido-completing-read)
+
 ;For comint modes, make arrow keys history
 (eval-after-load "comint"
 '(progn
@@ -40,6 +43,7 @@
 ;IDO
 (require 'ido)
 (ido-mode t)
+(ido-everywhere t)
 
 (require 'ido-ubiquitous)
 (ido-ubiquitous-mode t)
@@ -92,6 +96,9 @@
                ac-sources)))
 
 
+(require 'ws-butler)
+(add-hook 'python-mode-hook 'ws-butler-mode)
+
 (ac-flyspell-workaround)
 
 ;(require 'auto-complete-auctex)
@@ -106,7 +113,6 @@
 ;Python
 
 (require 'python)
-
 
 
 (defun eval-window-buffer ()
@@ -176,8 +182,8 @@
 ;Ipython
 
 (setq
-python-shell-interpreter "ipython3"
-python-shell-interpreter-args "--no-autoindent"
+ python-shell-interpreter "ipython3"
+python-shell-interpreter-args "--simple-prompt -i"
 python-shell-prompt-regexp "In \\[[0-9]+\\]: "
 python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
 python-shell-completion-setup-code
@@ -227,6 +233,7 @@ python-shell-completion-string-code
 (setq jedi:complete-on-dot t)                 ; optional
 (require 'jedi)
 (add-hook 'python-mode-hook 'jedi:setup)
+(add-hook 'ein:connect-mode-hook 'ein:jedi-setup)
 
 
 
@@ -287,6 +294,8 @@ python-shell-completion-string-code
 ;(add-hook 'python-mode-hook 'flymake-mode)
 
 (require 'tramp-cmds)
+
+(setq password-cache-expiry nil)
 
 (add-hook 'python-mode-hook
 	  (lambda ()
@@ -601,3 +610,49 @@ python-shell-completion-string-code
       (goto-char 79)
       (org-table-sort-lines nil ?N)))
   (pop-to-buffer "*word-statistics*"))
+
+  (defun my-insert-file-name (filename &optional args)
+    "Insert name of file FILENAME into buffer after point.
+  
+  Prefixed with \\[universal-argument], expand the file name to
+  its fully canocalized path.  See `expand-file-name'.
+  
+  Prefixed with \\[negative-argument], use relative path to file
+  name from current directory, `default-directory'.  See
+  `file-relative-name'.
+  
+  The default with no prefix is to insert the file name exactly as
+  it appears in the minibuffer prompt."
+    ;; Based on insert-file in Emacs -- ashawley 20080926
+    (interactive "*fInsert file name: \nP")
+    (cond ((eq '- args)
+           (insert (file-relative-name filename)))
+          ((not (null args))
+           (insert (expand-file-name filename)))
+          (t
+           (insert filename))))
+
+(defun my-insert-relative-file-name (filename &optional args)
+    "Insert name of file FILENAME into buffer after point.
+  
+  Prefixed with \\[negative-argument], expand the file name to
+  its fully canocalized path.  See `expand-file-name'.
+  
+  Prefixed with \\[universal-argument], use relative path to file
+  name from current directory, `default-directory'.  See
+  `file-relative-name'.
+  
+  The default with no prefix is to insert the file name exactly as
+  it appears in the minibuffer prompt."
+    ;; Based on insert-file in Emacs -- ashawley 20080926
+    (interactive "*fInsert file name: \nP")
+    (cond ((eq '- args)
+           (insert (file-relative-name filename)))
+          ((not (null args))
+           (insert (expand-file-name filename)))
+          (t
+           (insert filename))))
+
+
+(global-set-key "\C-c\C-i" 'my-insert-file-name)
+(global-set-key "\C-c\C-r" 'my-insert-relative-file-name)
